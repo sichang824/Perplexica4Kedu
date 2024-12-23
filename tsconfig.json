@@ -1,9 +1,9 @@
 {
   "compilerOptions": {
     "lib": ["ESNext"],
-    "module": "Node16",
-    "moduleResolution": "Node16",
-    "target": "ESNext",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "target": "ES2017",
     "outDir": "dist",
     "sourceMap": false,
     "esModuleInterop": true,
