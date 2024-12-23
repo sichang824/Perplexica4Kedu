@@ -1,15 +1,17 @@
-import express from 'express';
-import logger from '../utils/logger';
-import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
 import type { Embeddings } from '@langchain/core/embeddings';
+import type { BaseChatModel } from '@langchain/core/language_models/chat_models';
+import { AIMessage, BaseMessage, HumanMessage } from '@langchain/core/messages';
 import { ChatOpenAI } from '@langchain/openai';
+import express from 'express';
+import { config } from '../config';
+import { cacheClient } from '../db/cached';
 import {
   getAvailableChatModelProviders,
   getAvailableEmbeddingModelProviders,
 } from '../lib/providers';
-import { searchHandlers } from '../websocket/messageHandler';
-import { AIMessage, BaseMessage, HumanMessage } from '@langchain/core/messages';
 import { MetaSearchAgentType } from '../search/metaSearchAgent';
+import logger from '../utils/logger';
+import { searchHandlers } from '../websocket/messageHandler';
 
 const router = express.Router();
 
@@ -40,6 +42,23 @@ router.post('/', async (req, res) => {
 
     if (!body.focusMode || !body.query) {
       return res.status(400).json({ message: 'Missing focus mode or query' });
+    }
+
+    // 生成缓存键，包含所有相关参数
+    const cacheKey = `search:${JSON.stringify({
+      query: body.query,
+      focusMode: body.focusMode,
+      optimizationMode: body.optimizationMode,
+      chatModel: body.chatModel,
+      embeddingModel: body.embeddingModel,
+      historyLength: body.history?.length || 0,
+    })}`;
+
+    // 检查缓存
+    const cachedResult = await cacheClient.get(cacheKey);
+    if (cachedResult) {
+      logger.info(`从缓存获取搜索结果: ${cacheKey}`);
+      return res.json(JSON.parse(cachedResult));
     }
 
     body.history = body.history || [];
@@ -143,8 +162,17 @@ router.post('/', async (req, res) => {
       }
     });
 
-    emitter.on('end', () => {
-      res.status(200).json({ message, sources });
+    emitter.on('end', async () => {
+      const result = { message, sources };
+
+      // 将结果存入缓存
+      await cacheClient.set(
+        cacheKey,
+        JSON.stringify(result),
+        config.CACHE.CACHE_EXPIRATION,
+      );
+      logger.info(`搜索结果已缓存: ${cacheKey}`);
+      res.status(200).json(result);
     });
 
     emitter.on('error', (data) => {
@@ -152,8 +180,8 @@ router.post('/', async (req, res) => {
       res.status(500).json({ message: parsedData.data });
     });
   } catch (err: any) {
-    logger.error(`Error in getting search results: ${err.message}`);
-    res.status(500).json({ message: 'An error has occurred.' });
+    logger.error(`搜索出错: ${err.message}`);
+    res.status(500).json({ message: '发生错误。' });
   }
 });
 
