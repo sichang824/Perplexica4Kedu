@@ -1,15 +1,15 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { getSuggestions } from '@/lib/actions';
 import { Document } from '@langchain/core/documents';
-import Navbar from './Navbar';
+import crypto from 'crypto';
+import Error from 'next/error';
+import { useSearchParams } from 'next/navigation';
+import { useEffect, useRef, useState } from 'react';
+import { toast } from 'sonner';
 import Chat from './Chat';
 import EmptyChat from './EmptyChat';
-import crypto from 'crypto';
-import { toast } from 'sonner';
-import { useSearchParams } from 'next/navigation';
-import { getSuggestions } from '@/lib/actions';
-import Error from 'next/error';
+import Navbar from './Navbar';
 
 export type Message = {
   messageId: string;
@@ -53,6 +53,7 @@ const useSocket = (
           },
         ).then(async (res) => await res.json());
 
+        // This is not a strong check, but it's a good start
         if (
           !chatModel ||
           !chatModelProvider ||
