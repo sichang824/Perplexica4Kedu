@@ -1,6 +1,6 @@
+import toml from '@iarna/toml';
 import fs from 'fs';
 import path from 'path';
-import toml from '@iarna/toml';
 
 const configFileName = 'config.toml';
 
@@ -20,6 +20,11 @@ interface Config {
     SEARXNG: string;
     OLLAMA: string;
   };
+  CACHE: {
+    REDIS_URL: string;
+    REDIS_DB: number;
+    CACHE_EXPIRATION: number;
+  };
 }
 
 type RecursivePartial<T> = {
@@ -31,49 +36,65 @@ const loadConfig = () =>
     fs.readFileSync(path.join(__dirname, `../${configFileName}`), 'utf-8'),
   ) as any as Config;
 
-export const getPort = () => loadConfig().GENERAL.PORT;
+let cachedConfig: Config | null = null;
 
-export const getSimilarityMeasure = () =>
-  loadConfig().GENERAL.SIMILARITY_MEASURE;
+const getConfig = (): Config => {
+  if (!cachedConfig) {
+    cachedConfig = loadConfig();
+  }
+  return cachedConfig;
+};
 
-export const getKeepAlive = () => loadConfig().GENERAL.KEEP_ALIVE;
+export const config = new Proxy({} as Config, {
+  get: (target, prop: keyof Config) => {
+    return getConfig()[prop];
+  },
+});
 
-export const getOpenaiApiKey = () => loadConfig().API_KEYS.OPENAI;
+export const getPort = () => config.GENERAL.PORT;
 
-export const getGroqApiKey = () => loadConfig().API_KEYS.GROQ;
+export const getSimilarityMeasure = () => config.GENERAL.SIMILARITY_MEASURE;
 
-export const getAnthropicApiKey = () => loadConfig().API_KEYS.ANTHROPIC;
+export const getKeepAlive = () => config.GENERAL.KEEP_ALIVE;
 
-export const getGeminiApiKey = () => loadConfig().API_KEYS.GEMINI;
+export const getOpenaiApiKey = () => config.API_KEYS.OPENAI;
+
+export const getGroqApiKey = () => config.API_KEYS.GROQ;
+
+export const getAnthropicApiKey = () => config.API_KEYS.ANTHROPIC;
+
+export const getGeminiApiKey = () => config.API_KEYS.GEMINI;
 
 export const getSearxngApiEndpoint = () =>
-  process.env.SEARXNG_API_URL || loadConfig().API_ENDPOINTS.SEARXNG;
+  process.env.SEARXNG_API_URL || config.API_ENDPOINTS.SEARXNG;
 
-export const getOllamaApiEndpoint = () => loadConfig().API_ENDPOINTS.OLLAMA;
+export const getOllamaApiEndpoint = () => config.API_ENDPOINTS.OLLAMA;
 
-export const updateConfig = (config: RecursivePartial<Config>) => {
+export const updateConfig = (newConfig: RecursivePartial<Config>) => {
   const currentConfig = loadConfig();
 
   for (const key in currentConfig) {
-    if (!config[key]) config[key] = {};
+    if (!newConfig[key]) newConfig[key] = {};
 
     if (typeof currentConfig[key] === 'object' && currentConfig[key] !== null) {
       for (const nestedKey in currentConfig[key]) {
         if (
-          !config[key][nestedKey] &&
+          !newConfig[key][nestedKey] &&
           currentConfig[key][nestedKey] &&
-          config[key][nestedKey] !== ''
+          newConfig[key][nestedKey] !== ''
         ) {
-          config[key][nestedKey] = currentConfig[key][nestedKey];
+          newConfig[key][nestedKey] = currentConfig[key][nestedKey];
         }
       }
-    } else if (currentConfig[key] && config[key] !== '') {
-      config[key] = currentConfig[key];
+    } else if (currentConfig[key] && newConfig[key] !== '') {
+      newConfig[key] = currentConfig[key];
     }
   }
 
   fs.writeFileSync(
     path.join(__dirname, `../${configFileName}`),
-    toml.stringify(config),
+    toml.stringify(newConfig),
   );
+
+  cachedConfig = null;
 };
