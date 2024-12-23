@@ -1,11 +1,4 @@
-import {
-  BadgePercent,
-  ChevronDown,
-  Globe,
-  Pencil,
-  ScanEye,
-  SwatchBook,
-} from 'lucide-react';
+import { FocusModeList } from '@/config/focus-modes';
 import { cn } from '@/lib/utils';
 import {
   Popover,
@@ -13,59 +6,8 @@ import {
   PopoverPanel,
   Transition,
 } from '@headlessui/react';
-import { SiReddit, SiYoutube } from '@icons-pack/react-simple-icons';
+import { ChevronDown, ScanEye } from 'lucide-react';
 import { Fragment } from 'react';
-
-const focusModes = [
-  {
-    key: 'webSearch',
-    title: 'All',
-    description: 'Searches across all of the internet',
-    icon: <Globe size={20} />,
-  },
-  {
-    key: 'academicSearch',
-    title: 'Academic',
-    description: 'Search in published academic papers',
-    icon: <SwatchBook size={20} />,
-  },
-  {
-    key: 'writingAssistant',
-    title: 'Writing',
-    description: 'Chat without searching the web',
-    icon: <Pencil size={16} />,
-  },
-  {
-    key: 'wolframAlphaSearch',
-    title: 'Wolfram Alpha',
-    description: 'Computational knowledge engine',
-    icon: <BadgePercent size={20} />,
-  },
-  {
-    key: 'youtubeSearch',
-    title: 'Youtube',
-    description: 'Search and watch videos',
-    icon: (
-      <SiYoutube
-        className="h-5 w-auto mr-0.5"
-        onPointerEnterCapture={undefined}
-        onPointerLeaveCapture={undefined}
-      />
-    ),
-  },
-  {
-    key: 'redditSearch',
-    title: 'Reddit',
-    description: 'Search for discussions and opinions',
-    icon: (
-      <SiReddit
-        className="h-5 w-auto mr-0.5"
-        onPointerEnterCapture={undefined}
-        onPointerLeaveCapture={undefined}
-      />
-    ),
-  },
-];
 
 const Focus = ({
   focusMode,
@@ -82,9 +24,9 @@ const Focus = ({
       >
         {focusMode !== 'webSearch' ? (
           <div className="flex flex-row items-center space-x-1">
-            {focusModes.find((mode) => mode.key === focusMode)?.icon}
+            {FocusModeList.find((mode) => mode.id === focusMode)?.icon}
             <p className="text-xs font-medium hidden lg:block">
-              {focusModes.find((mode) => mode.key === focusMode)?.title}
+              {FocusModeList.find((mode) => mode.id === focusMode)?.name}
             </p>
             <ChevronDown size={20} className="-translate-x-1" />
           </div>
@@ -106,13 +48,13 @@ const Focus = ({
       >
         <PopoverPanel className="absolute z-10 w-64 md:w-[500px] left-0">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2 bg-light-primary dark:bg-dark-primary border rounded-lg border-light-200 dark:border-dark-200 w-full p-4 max-h-[200px] md:max-h-none overflow-y-auto">
-            {focusModes.map((mode, i) => (
+            {FocusModeList.map((mode, i) => (
               <PopoverButton
-                onClick={() => setFocusMode(mode.key)}
+                onClick={() => setFocusMode(mode.id)}
                 key={i}
                 className={cn(
                   'p-2 rounded-lg flex flex-col items-start justify-start text-start space-y-2 duration-200 cursor-pointer transition',
-                  focusMode === mode.key
+                  focusMode === mode.id
                     ? 'bg-light-secondary dark:bg-dark-secondary'
                     : 'hover:bg-light-secondary dark:hover:bg-dark-secondary',
                 )}
@@ -120,13 +62,13 @@ const Focus = ({
                 <div
                   className={cn(
                     'flex flex-row items-center space-x-1',
-                    focusMode === mode.key
+                    focusMode === mode.id
                       ? 'text-[#24A0ED]'
                       : 'text-black dark:text-white',
                   )}
                 >
                   {mode.icon}
-                  <p className="text-sm font-medium">{mode.title}</p>
+                  <p className="text-sm font-medium">{mode.name}</p>
                 </div>
                 <p className="text-black/70 dark:text-white/70 text-xs">
                   {mode.description}

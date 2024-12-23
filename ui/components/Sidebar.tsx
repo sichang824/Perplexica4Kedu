@@ -38,6 +38,12 @@ const Sidebar = ({ children }: { children: React.ReactNode }) => {
       active: segments.includes('library'),
       label: 'Library',
     },
+    {
+      icon: Settings,
+      href: '/settings',
+      active: segments.includes('settings'),
+      label: 'Settings',
+    },
   ];
 
   return (
