@@ -16,8 +16,10 @@ services:
     image: itzcrazykns1337/perplexica-backend:main
     environment:
       - SEARXNG_API_URL=http://searxng:8080
+      - MCP_SERVER_URL=http://mcp-server:3001
     depends_on:
       - searxng
+      - mcp-server
     ports:
       - 3001:3001
     volumes:
@@ -53,6 +55,14 @@ services:
     volumes:
       - redis_data:/data
     restart: always
+
+  mcp-server:
+    build:
+      context: .
+      dockerfile: Dockerfile.mcp
+    ports:
+      - "3002:3002"
+
 
 networks:
   perplexica-network:

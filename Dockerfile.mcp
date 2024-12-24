@@ -1,0 +1,24 @@
+FROM node:16
+
+# 安装 canvas 的系统依赖
+RUN apt-get update && apt-get install -y \
+    libcairo2-dev \
+    libpango1.0-dev \
+    libjpeg-dev \
+    libgif-dev \
+    librsvg2-dev \
+    build-essential
+
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm install
+
+COPY . .
+
+# 编译 TypeScript
+RUN npm run mcp:build
+
+EXPOSE 3002
+
+CMD ["node", "dist/mcp-server/index.js"] 
