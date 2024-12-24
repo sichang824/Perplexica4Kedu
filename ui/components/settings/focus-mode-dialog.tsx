@@ -64,16 +64,20 @@ export function FocusModeDialog({
     try {
       setIsSubmitting(true);
 
-      throw new Error('提交表单时出错');
+      if (data.name === 'error') {
+        throw new Error('提交表单时出错');
+      }
 
       setTimeout(async () => {
         onOpenChange(false);
         await onSubmit(data);
-        setIsSubmitting(false);
       }, 1000);
     } catch (err: any) {
       toast.error(err.message);
     }
+    setTimeout(async () => {
+      setIsSubmitting(false);
+    }, 1000);
   };
 
   return (

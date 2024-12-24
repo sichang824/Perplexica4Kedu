@@ -371,6 +371,9 @@ const ChatWindow = ({ id }: { id?: string }) => {
 
     messageId = messageId ?? crypto.randomBytes(7).toString('hex');
 
+    console.log(messageId);
+    
+
     ws?.send(
       JSON.stringify({
         type: 'message',

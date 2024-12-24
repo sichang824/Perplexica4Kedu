@@ -25,6 +25,9 @@ interface Config {
     REDIS_DB: number;
     CACHE_EXPIRATION: number;
   };
+  MCP: {
+    SERVER_URL: string;
+  };
 }
 
 type RecursivePartial<T> = {
@@ -97,4 +100,12 @@ export const updateConfig = (newConfig: RecursivePartial<Config>) => {
   );
 
   cachedConfig = null;
+};
+
+export const mcpConfig = {
+  serverUrl: config?.MCP?.SERVER_URL || 'http://localhost:3002',
+  endpoints: {
+    textToImage: '/api/text-to-image',
+  },
+  timeout: 30000,
 };

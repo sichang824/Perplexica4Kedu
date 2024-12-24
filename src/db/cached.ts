@@ -18,7 +18,7 @@ class CacheClient {
     this.config = {
       url: process.env.REDIS_URL,
       host: process.env.REDIS_HOST || 'localhost',
-      port: parseInt(process.env.REDIS_PORT || '6379'),
+      port: parseInt(process.env.REDIS_PORT || '56379'),
       password: process.env.REDIS_PASSWORD,
       db: parseInt(process.env.REDIS_DB || '0'),
       ...config,
@@ -26,7 +26,6 @@ class CacheClient {
 
     const url =
       this.config.url || `redis://${this.config.host}:${this.config.port}`;
-
     this.client = createClient({
       url,
       password: this.config.password,
@@ -113,6 +112,7 @@ class CacheClient {
     }
   }
 }
+console.log(config.CACHE.REDIS_URL);
 
 // 创建默认实例
 export const cacheClient = new CacheClient({
