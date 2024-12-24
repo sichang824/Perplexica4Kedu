@@ -96,13 +96,14 @@ volumes:
 ## 题目1（前端）：新增高级 Focus 模式管理界面
 
 ![image](docs/image.png)
-[![](https://github.com/sichang824/Perplexica4Kedu/blob/master/docs/Screen%20Recording%202024-12-24%20at%2015.47.49.mov)](https://github.com/sichang824/Perplexica4Kedu/blob/master/docs/Screen%20Recording%202024-12-24%20at%2015.47.49.mov)
 
-
-
+<video src="https://github.com/sichang824/Perplexica4Kedu/blob/master/docs/Screen%20Recording%202024-12-24%20at%2015.47.49.mov" controls="controls" style="max-width: 730px;">
+</video>
 
 ## 题目2（后端）：实现 Redis 缓存层优化搜索结果
 
 ![image](docs/image1.png)
+<video src="https://github.com/sichang824/Perplexica4Kedu/blob/master/docs/Screen%20Recording%202024-12-24%20at%2016.20.35.mov" controls="controls" style="max-width: 730px;">
+</video>
 
 ## 题目3（后端）：整合 MCP 到 Perplexica，支持文字转图片功能
