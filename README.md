@@ -98,6 +98,7 @@ volumes:
 ![image](docs/image.png)
 
 ### 视频
+
 [下载视频](docs/Screen%20Recording%202024-12-24%20at%2015.47.49.mov)
 <video src="docs/Screen%20Recording%202024-12-24%20at%2015.47.49.mov" controls="controls" style="max-width: 730px;">
 </video>
@@ -105,9 +106,41 @@ volumes:
 ## 题目2（后端）：实现 Redis 缓存层优化搜索结果
 
 ![image](docs/image1.png)
+
 ### 视频
+
 [下载视频](docs/Screen%20Recording%202024-12-24%20at%2016.20.35.mov)
 <video src="docs/Screen%20Recording%202024-12-24%20at%2016.20.35.mov" controls="controls" style="max-width: 730px;">
 </video>
 
 ## 题目3（后端）：整合 MCP 到 Perplexica，支持文字转图片功能
+
+### 开发进度
+
+目前已完成:
+
+- MCP Server 的基础功能开发
+- Docker 容器化配置
+
+待优化事项:
+
+1. 类型兼容性问题
+   - Perplexica 项目与 @modelcontextprotocol/sdk 存在 Node.js 类型定义差异
+   - 需要进行类型定义的统一和适配
+
+2. 集成优化
+   - 需要重构部分代码以更好地支持 MCP 协议
+   - 优化 WebSocket 通信层以支持图片生成功能
+
+3. 性能优化
+   - 优化图片生成和传输流程
+   - 实现更高效的数据交换机制
+
+### 后续计划
+
+1. 解决类型兼容性问题
+2. 完善 MCP 集成文档
+3. 添加更多单元测试
+4. 优化错误处理机制
+
+> 注: 由于技术栈整合的复杂性，该功能仍在持续优化中。
